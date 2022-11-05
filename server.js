@@ -14,6 +14,12 @@ import mongoose from 'mongoose';
 import connectDB from './config/dbConn.js';
 import PostRoutes from './routes/api/post.js';
 import UserRoutes from './routes/api/user.js';
+// import AuthRoutes from './controllers/AuthController.js';
+// import CategoryRoutes from './routes/api/category.js';
+import AuthController from './controllers/AuthController.js';
+
+
+
 // connect to Database
 connectDB();
 
@@ -46,9 +52,12 @@ app.get("/", (req, res)=>{
 });
 
 //post routes
-app.use('/post', PostRoutes);
+app.use('/post/:id?', PostRoutes);
 //user routes
 app.use('/user', UserRoutes);
+app.use('/register', (req, res, next) =>AuthController.register(req, res, next));
+app.use('/login', (req, res, next) =>AuthController.login(req, res, next));
+app.use('/logout', (req, res, next) =>AuthController.logout(req, res, next));
 app.all('*',(req,res)=>{
     res.status(404);
 });

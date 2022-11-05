@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongooseSchema;
+import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
 
 const UserSchema =  new Schema({
     first_name:{
@@ -41,14 +41,16 @@ const UserSchema =  new Schema({
     },
     refreshToken: String,
     created_at:{
-        type:String,
+        type:Date,
+        default: Date.now,
         required: true
     },
     updated_at:{
-        type:String,
-        required: true
+        type:Date,
+        default:Date.now
+        // required: true
     }
 
 });
 
-module.exports = mongoose.model('User',UserSchema);
+export default mongoose.model('User',UserSchema);

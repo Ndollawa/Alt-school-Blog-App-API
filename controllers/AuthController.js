@@ -1,16 +1,45 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+import  Users from '../models/User.js';
+import  bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 // require('dotenv').config()
 
 class AuthController{
 
+    // handles user registration
+register = async (req, res)=>{
+    const {first_name, last_name, user_email, password, username} = req.body;
+    if(!user_email || !password)return res.status(400).json({'message': 'Email and password are required!'});
+
+    //check for duplicate emails in the DB
+    const duplicate = await Users.findOne({email:user_email}).exec();
+    if(duplicate)return res.sendStatus(409);// conflict
+    try{
+
+        //encrypt password
+        const hashedPassword = await bcrypt.hash(password,10);
+
+        // create and save new User
+        const newUser = await Users.create({
+            "first_name":first_name,
+            "last_name":last_name,
+            'email': user_email,
+            'username' : username,
+            // 'roles':{'Author':3},
+            'password':hashedPassword});
+        // userDB.
+        res.status(201).json({'message':   `New user ${user_email} created!`});
+    }catch(err){
+        res.status(500).json({'message': err.message});
+    }
+}
+//hanles user login
 login = async (req, res)=>{
-    const {user_email, password, username} = req.body;
+    const {user_email, password} = req.body;
     if(!user_email || !password)return res.status(400).json({'message': 'Email and password are required!'});
 
     //check for user  in the DB || username:username
 
-    const foundUser = await Users.findOne({email:user_email}).exec()?. Users.findOne({username:username}).exec();
+    const foundUser = await Users.findOne({email:user_email}).exec();
     if(!foundUser)return res.sendStatus(401);// unauthorized
     try{
 
@@ -23,22 +52,21 @@ login = async (req, res)=>{
                     userInfo:{
                         'userEmail':foundUser.email, 
                         'username':foundUser.username,
-                        'roles':roles
+                        'roles':foundUser.roles
                     }
                 },
-                process.env.ACCESS_TOKEB_SECRET,
+                process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn: '300s'}
             );
             const refreshToken = jwt.sign(
                 {'userEmail':foundUser.email},
-                process.env.ACCESS_TOKEB_SECRET,
-                {expiresIn: '1d'}
+                process.env.ACCESS_TOKEN_SECRET
             );
                 //save refresh token of current user 
                 foundUser.refreshToken = refreshToken;
                 const result = await foundUser.save() 
                 
-            res.cookie('jwt', refreshToken,{httpOnly:true,secure:true, sameSite:'None', maxAge:24*60*60*1000});
+            res.cookie('jwt', refreshToken,{httpOnly:true,secure:true, sameSite:'None', maxAge: 60*60});
             res.json({accessToken})
 
         res.status(201).json({'success':   `User ${user_email?.username} logged in!`
@@ -84,7 +112,7 @@ refreshTokenHandler = async (req, res)=>{
                     userInfo:{
                         'userEmail':decodedToken.userEmail, 
                         'username':decodedToken.username, 
-                        'roles':roles
+                        'roles':foundUser.roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
@@ -97,4 +125,4 @@ refreshTokenHandler = async (req, res)=>{
 
 }
 
-export default AuthController;
+export default new AuthController();

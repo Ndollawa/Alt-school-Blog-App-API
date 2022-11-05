@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongooseSchema;
+import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
 
 const PostSchema =  new Schema({
     author:{
@@ -11,13 +11,12 @@ const PostSchema =  new Schema({
         required: true,
         unique: true
     },
-    content:{
+    body:{
         type:String,
         required: true
     },
     description:{
-        type:String,
-        required: true
+        type:String
         
     },
     tags:{
@@ -57,4 +56,4 @@ const PostSchema =  new Schema({
 
 });
 
-module.exports = mongoose.model('Post',PostSchema);
+export default mongoose.model('Post',PostSchema);
