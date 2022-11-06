@@ -10,7 +10,7 @@ let PostHandler = new PostController();
 
 router.route('/')
 .get((req, res, next) => PostHandler.index(req, res, next))
-.post( verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.create(req, res, next));
+.post(verifyJWT, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.create(req, res, next));
 
 router.route('/:id/')
 .get((req, res, next) => PostHandler.show(req, res, next))

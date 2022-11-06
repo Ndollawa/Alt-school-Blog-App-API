@@ -49,7 +49,7 @@ login = async (req, res)=>{
             //create JWTs
             const accessToken = jwt.sign(
                 {
-                    userInfo:{
+                    'userInfo':{
 
                         'user':foundUser._id,
                         'userEmail':foundUser.email, 
@@ -58,11 +58,12 @@ login = async (req, res)=>{
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '1h'}
+                {expiresIn: '300s'}
             );
             const refreshToken = jwt.sign(
                 {'userEmail':foundUser.email},
-                process.env.ACCESS_TOKEN_SECRET
+                process.env.REFRESH_TOKEN_SECRET,
+                {expiresIn:'1h'}
             );
                 //save refresh token of current user secure:true, 
                 foundUser.refreshToken = refreshToken;
@@ -113,15 +114,15 @@ refreshTokenHandler = async (req, res)=>{
             if(err || foundUser.email !== decodedToken.userEmail) return res.sendStatus(403);
             const accessToken =jwt.sign(
                 {
-                    userInfo:{
+                    "userInfo":{
                         'user':decodedToken.user,
-                        'userEmail':decodedToken.email, 
+                        'userEmail':decodedToken.userEmail, 
                         'username':decodedToken.username, 
                         'roles':decodedToken.roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '1h'}
+                {expiresIn: '300s'}
             )
         }
         );

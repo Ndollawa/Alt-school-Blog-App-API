@@ -59,9 +59,9 @@ app.use('/logout', (req, res, next) =>AuthController.logout(req, res, next));
 
 //post routes
 app.use('/post', PostRoutes);
+
+
 app.use(verifyJWT);
-
-
 //user routes
 app.use('/user', UserRoutes);
 app.all('*',(req,res)=>{
