@@ -9,8 +9,40 @@ class PostController{
    }
    index = async (req, res)=>{
     const Post = await PostModel.find();
+    const customLabels = {
+        totalDocs: 'itemCount',
+        docs: 'itemsList',
+        limit: 'perPage',
+        page: 'currentPage',
+        nextPage: 'next',
+        prevPage: 'prev',
+        totalPages: 'pageCount',
+        pagingCounter: 'slNo',
+        meta: 'paginator',
+      };
+      
+      const options = {
+        page: 1,
+        limit: 10,
+        customLabels: customLabels,
+      };
+      
+     
     if(!Post) return res.status(204).json({'message': 'No Post found!'});
-    res.json(Post);
+   
+     PostModel.paginate({}, options, function (err, result) {
+        result.itemsList //[here docs become itemsList]
+        result.paginator.itemCount //[here totalDocs becomes itemCount]
+        result.paginator.perPage //[here limit becomes perPage]
+        result.paginator.currentPage  //[here page becomes currentPage]
+        result.paginator.pageCount //[here totalPages becomes pageCount]
+        result.paginator.next  //[here nextPage becomes next]
+        result.paginator.prev //[here prevPage becomes prev]
+        result.paginator.slNo //[here pagingCounter becomes slNo]
+        result.paginator.hasNextPage 
+        result.paginator.hasPrevPage
+        res.json(result);
+      });
     }
     show = async (req, res)=>{
         if(!req?.params?.id)
