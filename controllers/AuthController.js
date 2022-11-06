@@ -66,11 +66,11 @@ login = async (req, res)=>{
                 process.env.REFRESH_TOKEN_SECRET,
                 {expiresIn:'1h'}
             );
-                //save refresh token of current user secure:true, 
+                //save refresh token of current user 
                 foundUser.refreshToken = refreshToken;
                 const result = await foundUser.save() 
                 
-            res.cookie('jwt', refreshToken,{httpOnly:true,sameSite:'None', maxAge: 24
+            res.cookie('jwt', refreshToken,{httpOnly:true, secure:true, sameSite:'None', maxAge: 24
             *60*60*7});
             res.json({accessToken})
 
