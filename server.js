@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config(); 
 
-import express from "express";
+import express, { application } from "express";
 import path from 'path';
 import cors from 'cors';
 import { logger} from './middleware/logEvents.js';
@@ -14,7 +14,7 @@ import mongoose from 'mongoose';
 import connectDB from './config/dbConn.js';
 import PostRoutes from './routes/api/post.js';
 import UserRoutes from './routes/api/user.js';
-// import AuthRoutes from './controllers/AuthController.js';
+import RefreshRoute from './routes/api/refresh.js';
 // import CategoryRoutes from './routes/api/category.js';
 import AuthController from './controllers/AuthController.js';
 
@@ -51,13 +51,19 @@ app.get("/", (req, res)=>{
     res.send("Hello World!");
 });
 
-//post routes
-app.use('/post/:id?', PostRoutes);
-//user routes
-app.use('/user', UserRoutes);
+
 app.use('/register', (req, res, next) =>AuthController.register(req, res, next));
 app.use('/login', (req, res, next) =>AuthController.login(req, res, next));
+app.use('/refresh',RefreshRoute);
 app.use('/logout', (req, res, next) =>AuthController.logout(req, res, next));
+
+//post routes
+app.use('/post', PostRoutes);
+app.use(verifyJWT);
+
+
+//user routes
+app.use('/user', UserRoutes);
 app.all('*',(req,res)=>{
     res.status(404);
 });

@@ -1,4 +1,4 @@
-import  Users from '../models/User.js';
+import  UserModel from '../models/User.js';
 import  bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 // require('dotenv').config()
@@ -11,7 +11,7 @@ register = async (req, res)=>{
     if(!user_email || !password)return res.status(400).json({'message': 'Email and password are required!'});
 
     //check for duplicate emails in the DB
-    const duplicate = await Users.findOne({email:user_email}).exec();
+    const duplicate = await UserModel.findOne({email:user_email}).exec();
     if(duplicate)return res.sendStatus(409);// conflict
     try{
 
@@ -19,7 +19,7 @@ register = async (req, res)=>{
         const hashedPassword = await bcrypt.hash(password,10);
 
         // create and save new User
-        const newUser = await Users.create({
+        const newUser = await UserModel.create({
             "first_name":first_name,
             "last_name":last_name,
             'email': user_email,
@@ -39,7 +39,7 @@ login = async (req, res)=>{
 
     //check for user  in the DB || username:username
 
-    const foundUser = await Users.findOne({email:user_email}).exec();
+    const foundUser = await UserModel.findOne({email:user_email}).exec();
     if(!foundUser)return res.sendStatus(401);// unauthorized
     try{
 
@@ -50,27 +50,30 @@ login = async (req, res)=>{
             const accessToken = jwt.sign(
                 {
                     userInfo:{
+
+                        'user':foundUser._id,
                         'userEmail':foundUser.email, 
                         'username':foundUser.username,
                         'roles':foundUser.roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '300s'}
+                {expiresIn: '1h'}
             );
             const refreshToken = jwt.sign(
                 {'userEmail':foundUser.email},
                 process.env.ACCESS_TOKEN_SECRET
             );
-                //save refresh token of current user 
+                //save refresh token of current user secure:true, 
                 foundUser.refreshToken = refreshToken;
                 const result = await foundUser.save() 
                 
-            res.cookie('jwt', refreshToken,{httpOnly:true,secure:true, sameSite:'None', maxAge: 60*60});
+            res.cookie('jwt', refreshToken,{httpOnly:true,sameSite:'None', maxAge: 24
+            *60*60*7});
             res.json({accessToken})
 
-        res.status(201).json({'success':   `User ${user_email?.username} logged in!`
-        })
+        // res.status(201).json({'success':   `User ${user_email?.username} logged in!`
+        // })
     } else{
             res.sendStatus(401);
         }
@@ -84,7 +87,7 @@ logout = async (req, res)=>{
     if(!cookies?.jwt)return res.sendStatus(401);
 
     //on logout delete access token
-    const foundUser = await Users.findOne({refreshToken}).exec();
+    const foundUser = await UserModel.findOne({refreshToken}).exec();
     if(!foundUser)return res.sendStatus(204);// unauthorized
     res.clearCookie('jwt',{httpOnly:true, secure:true, sameSite:'None' })   
     
@@ -98,11 +101,12 @@ refreshTokenHandler = async (req, res)=>{
     if(!cookies?.jwt)return res.sendStatus(401);
 
     //check for user  in the DB
-    const foundUser = await Users.findOne({refreshToken}).exec();
+
+    const foundUser = await UserModel.findOne({refreshToken}).exec();
     if(!foundUser)return res.sendStatus(401);// unauthorized
         const refreshToken = cookies.jwt;
         //evaluate jwt
-       jwy.verify(
+       jwt.verify(
         refreshToken,
         process.env.ACCESS_TOKEN_SECRET,
         (err, decodedToken)=>{
@@ -110,13 +114,14 @@ refreshTokenHandler = async (req, res)=>{
             const accessToken =jwt.sign(
                 {
                     userInfo:{
-                        'userEmail':decodedToken.userEmail, 
+                        'user':decodedToken.user,
+                        'userEmail':decodedToken.email, 
                         'username':decodedToken.username, 
-                        'roles':foundUser.roles
+                        'roles':decodedToken.roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: '300s'}
+                {expiresIn: '1h'}
             )
         }
         );

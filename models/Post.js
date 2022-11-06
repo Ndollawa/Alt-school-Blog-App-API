@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const PostSchema =  new Schema({
     author:{
-        type:String,
+        type:mongoose.ObjectId,
         required: true
     },
     title:{
@@ -27,22 +27,16 @@ const PostSchema =  new Schema({
         type:String,
         required: true
     },
-    comments:[{
-        body:String,
-    
-    }],
-    status:{
+    state:{
         type:String,
         default:'draft',
         required: true   
     },
     read_count:{
-        type:Number,
-        required: true
+        type:Number
     },
     reading_time:{
-        type:String,
-        required: true
+        type:String
     },
     created_at:{
         type:Date,
