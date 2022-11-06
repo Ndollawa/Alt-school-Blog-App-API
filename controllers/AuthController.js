@@ -47,6 +47,7 @@ login = async (req, res)=>{
         const match = await bcrypt.compare(password,foundUser.password);
         if(match){
             //create JWTs
+            const roles = Object.values(foundUser.roles);
             const accessToken = jwt.sign(
                 {
                     'userInfo':{
@@ -54,7 +55,7 @@ login = async (req, res)=>{
                         'user':foundUser._id,
                         'userEmail':foundUser.email, 
                         'username':foundUser.username,
-                        'roles':foundUser.roles
+                        'roles':roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
@@ -107,18 +108,20 @@ refreshTokenHandler = async (req, res)=>{
     if(!foundUser)return res.sendStatus(401);// unauthorized
         const refreshToken = cookies.jwt;
         //evaluate jwt
+
        jwt.verify(
         refreshToken,
         process.env.ACCESS_TOKEN_SECRET,
         (err, decodedToken)=>{
             if(err || foundUser.email !== decodedToken.userEmail) return res.sendStatus(403);
+            const roles = Object.values(foundUser.roles);
             const accessToken =jwt.sign(
                 {
                     "userInfo":{
                         'user':decodedToken.user,
                         'userEmail':decodedToken.userEmail, 
                         'username':decodedToken.username, 
-                        'roles':decodedToken.roles
+                        'roles':roles
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,

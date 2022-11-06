@@ -33,7 +33,8 @@ const PostSchema =  new Schema({
         required: true   
     },
     read_count:{
-        type:Number
+        type:Number,
+        default:0
     },
     reading_time:{
         type:String
@@ -45,7 +46,8 @@ const PostSchema =  new Schema({
     },
     updated_at:{
         type:Date,
-        required: true
+        required: true,
+        default:Date.now
     }
 
 });
