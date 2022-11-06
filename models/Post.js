@@ -38,18 +38,9 @@ const PostSchema =  new Schema({
     },
     reading_time:{
         type:String
-    },
-    created_at:{
-        type:Date,
-        required: true,
-        default:Date.now
-    },
-    updated_at:{
-        type:Date,
-        required: true,
-        default:Date.now
     }
 
-});
+},
+{timestamps:true});
 
 export default mongoose.model('Post',PostSchema);

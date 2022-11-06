@@ -37,18 +37,10 @@ const UserSchema =  new Schema({
     user_image:{
         type:String
     },
-    refreshToken: String,
-    created_at:{
-        type:Date,
-        default: Date.now,
-        required: true
-    },
-    updated_at:{
-        type:Date,
-        default:Date.now
-        // required: true
-    }
+    refreshToken: String
 
-});
+
+},
+{timestamps:true});
 
 export default mongoose.model('User',UserSchema);

@@ -1,25 +1,17 @@
 import mongoose from ('mongoose');
 const Schema = mongoose.Schema;
 
-const UserSchema =  new Schema({
-    first_name:{
+const CategorySchema =  new Schema({
+    title:{
         type:String,
         required: true
     },
-    last_name:{
-        type:String,
-        required: true
-    },
-    email:{
-        type:String,
-        required: true,
-        unique: true
-    },
-    roles:{
+    description:{
         type:String,
         required: true
     }
 
-});
+},
+{timestamps:true});
 
-export default mongoose.model('User',UserSchema);
+export default mongoose.model('Category',CategorySchema);
