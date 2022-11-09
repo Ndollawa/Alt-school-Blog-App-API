@@ -27,6 +27,7 @@ class PostController{
       const options = {
         page: 1,
         limit: 10,
+        populate:["author"],
         customLabels: customLabels,
       };
       
@@ -34,16 +35,16 @@ class PostController{
     if(!Post) return res.status(204).json({'message': 'No Post found!'});
    
      PostModel.paginate({}, options, function (err, result) {
-        result.itemsList;//[here docs become itemsList]
-        result.paginator.itemCount //[here totalDocs becomes itemCount]
-        result.paginator.perPage //[here limit becomes perPage]
-        result.paginator.currentPage  //[here page becomes currentPage]
-        result.paginator.pageCount //[here totalPages becomes pageCount]
-        result.paginator.next  //[here nextPage becomes next]
-        result.paginator.prev //[here prevPage becomes prev]
-        result.paginator.slNo //[here pagingCounter becomes slNo]
-        result.paginator.hasNextPage 
-        result.paginator.hasPrevPage
+        // result.itemsList//[here docs become itemsList]
+        // result.paginator.itemCount //[here totalDocs becomes itemCount]
+        // result.paginator.perPage //[here limit becomes perPage]
+        // result.paginator.currentPage  //[here page becomes currentPage]
+        // result.paginator.pageCount //[here totalPages becomes pageCount]
+        // result.paginator.next  //[here nextPage becomes next]
+        // result.paginator.prev //[here prevPage becomes prev]
+        // result.paginator.slNo //[here pagingCouwnter becomes slNo]
+        // result.paginator.hasNextPage 
+        // result.paginator.hasPrevPage
         res.json(result.itemsList);
       });
 
@@ -57,7 +58,7 @@ class PostController{
        const post = await PostModel.findOne({_id:req.params.id}).exec();
        if(!post) return res.status(204).json({'message':`No post matches ID ${req.params.id}.` });
         //check for a Post in the DB 
-    
+        PostModel.findOneAndUpdate({_id:post._id} ,{ read_count: post.read_count++ });
       res.json(post);
         
     }
