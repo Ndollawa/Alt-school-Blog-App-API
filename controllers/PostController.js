@@ -1,6 +1,5 @@
 import { request } from 'express';
 import  PostModel from '../models/Post.js';
-import  UserModel from '../models/User.js';
 class PostController{
      
    constructor(){
@@ -9,7 +8,10 @@ class PostController{
 
    }
    index = async (req, res)=>{
-    const Post = await PostModel.find();
+    // Item.findOne(...).populate('comments').exec((err, item) => {
+    //     console.log(item.comments);
+    // });
+    const Post = await PostModel.find().populate('author').exec();
     const customLabels = {
         totalDocs: 'itemCount',
         docs: 'itemsList',
@@ -31,32 +33,21 @@ class PostController{
      
     if(!Post) return res.status(204).json({'message': 'No Post found!'});
    
-    //  PostModel.paginate({}, options, function (err, result) {
-    //    const items  = result.itemsList;
-    //   const list = Object.values(items).map(async (item)=>{
-    //     const author = await UserModel.findOne({_id:item.author}).exec();
-    //     return  item;
-    //    })
-       
-        //[here docs become itemsList]
-    //     result.paginator.itemCount //[here totalDocs becomes itemCount]
-    //     result.paginator.perPage //[here limit becomes perPage]
-    //     result.paginator.currentPage  //[here page becomes currentPage]
-    //     result.paginator.pageCount //[here totalPages becomes pageCount]
-    //     result.paginator.next  //[here nextPage becomes next]
-    //     result.paginator.prev //[here prevPage becomes prev]
-    //     result.paginator.slNo //[here pagingCounter becomes slNo]
-    //     result.paginator.hasNextPage 
-    //     result.paginator.hasPrevPage
-    //     res.json(list);
-    //   });
-    // const items  = result.itemsList;
-    const list = Object.values(Post).map((item)=>{
-        return UserModel.findOne({_id:item.author});
-    
-    
-    })
-    res.json(list)
+     PostModel.paginate({}, options, function (err, result) {
+        result.itemsList;//[here docs become itemsList]
+        result.paginator.itemCount //[here totalDocs becomes itemCount]
+        result.paginator.perPage //[here limit becomes perPage]
+        result.paginator.currentPage  //[here page becomes currentPage]
+        result.paginator.pageCount //[here totalPages becomes pageCount]
+        result.paginator.next  //[here nextPage becomes next]
+        result.paginator.prev //[here prevPage becomes prev]
+        result.paginator.slNo //[here pagingCounter becomes slNo]
+        result.paginator.hasNextPage 
+        result.paginator.hasPrevPage
+        res.json(result.itemsList);
+      });
+
+    // res.json(Post)
     }
     show = async (req, res)=>{
         if(!req?.params?.id)

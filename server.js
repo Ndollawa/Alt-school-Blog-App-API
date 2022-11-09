@@ -24,7 +24,7 @@ import AuthController from './controllers/AuthController.js';
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 3500
+const PORT = process.env.PORT || 3501
 
 // custom middleware logger
 app.use(logger);
