@@ -25,7 +25,7 @@ class PostController{
       };
       
       const options = {
-        page: 1,
+        page: req?.params?.page || 1,
         limit: 10,
         populate:["author"],
         customLabels: customLabels,
@@ -45,7 +45,7 @@ class PostController{
         // result.paginator.slNo //[here pagingCouwnter becomes slNo]
         // result.paginator.hasNextPage 
         // result.paginator.hasPrevPage
-        res.json(result.itemsList);
+        res.json(result);
       });
 
     // res.json(Post)
@@ -58,11 +58,13 @@ class PostController{
        const post = await PostModel.findOne({_id:req.params.id}).exec();
        if(!post) return res.status(204).json({'message':`No post matches ID ${req.params.id}.` });
         //check for a Post in the DB 
-        PostModel.findOneAndUpdate({_id:post._id} ,{ read_count: post.read_count++ });
+      const  updateCount = await PostModel.findOneAndUpdate({_id:post._id} ,{ read_count: (post.read_count + 1) });
+    //   await updateCount.save()
       res.json(post);
         
     }
     create = async (req, res)=>{
+           
         if(!req?.body?.title || !req?.body?.body || !req?.body?.tags || !req?.body?.description)
         {
             return res.status(400).json({'message':'Post Title,Body,Tags and Description are required.'})
@@ -71,8 +73,11 @@ class PostController{
        const foundTiltle =  await PostModel.findOne({title}).exec();
        if(foundTiltle) return res.sendStatus(409);// conflict
        const userId = req.user;
-  
-        try{
+             const wpm = 225;
+            const words = body.trim().split(/\s+/).length;
+            const readTime = Math.ceil(words / wpm);
+         
+        try{    
             // create and save new Post
             const newPost = await PostModel.create({
                 "title":title,
@@ -80,7 +85,8 @@ class PostController{
                 "body":body,
                 'tags': tags,
                 'category' : category,
-                'description':description
+                'description':description,
+                'reading_time':readTime
             });
             // userDB.
             res.status(201).json({'message':   `New Post '${title}' created!`});

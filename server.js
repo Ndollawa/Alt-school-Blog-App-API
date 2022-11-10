@@ -4,6 +4,7 @@ dotenv.config();
 import express, { application } from "express";
 import path from 'path';
 import cors from 'cors';
+import {fileURLToPath} from 'url';
 import { logger} from './middleware/logEvents.js';
 import errorHandler from './middleware/errorHandler.js';
 import corsOptions from './config/corsOptions.js';
@@ -15,10 +16,16 @@ import connectDB from './config/dbConn.js';
 import PostRoutes from './routes/api/post.js';
 import UserRoutes from './routes/api/user.js';
 import RefreshRoute from './routes/api/refresh.js';
-// import CategoryRoutes from './routes/api/category.js';
+import RegisterRoutes from './routes/api/register.js';
+import AuthRoutes from './routes/api/auth.js';
 import AuthController from './controllers/AuthController.js';
+import RegisterController from './controllers/RegisterController.js';
+import  PostModel from './models/Post.js';
 
+const __filename = fileURLToPath(import.meta.url);
 
+// 
+const __dirname = path.dirname(__filename);
 
 // connect to Database
 connectDB();
@@ -46,14 +53,20 @@ app.use(express.json());
 
 //middleware for cookies
 app.use(cookieParser());
+//set view engine to ejs
+app.set("view engine",'ejs');
+app.use(express.static(path.join(__dirname, '/public')));
 ///routes
-app.get("/", (req, res)=>{
-    res.send("Hello World!");
+
+//server static files
+app.get("^/$|/index(.html)?", (req, res, next)=>{
+
+    res.render(path.join(__dirname,'views','index'), {posts:PostModel} );
 });
 
 
-app.use('/register', (req, res, next) =>AuthController.register(req, res, next));
-app.use('/login', (req, res, next) =>AuthController.login(req, res, next));
+app.use('/register', RegisterRoutes);
+app.use('/login',AuthRoutes);
 app.use('/refresh',RefreshRoute);
 app.use('/logout', (req, res, next) =>AuthController.logout(req, res, next));
 
@@ -65,7 +78,8 @@ app.use(verifyJWT);
 //user routes
 app.use('/user', UserRoutes);
 app.all('*',(req,res)=>{
-    res.status(404);
+    res.status(404).sendFille(path.join(__dirname,'views','404.html'));
+    ;
 });
 
 // custom middleware for handling errors

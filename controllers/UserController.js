@@ -3,6 +3,11 @@ import  bcrypt from 'bcrypt';
 
 class UserController{
    
+    constructor(){
+        this.index = this.index.bind(this);
+    
+
+   }
     index = (req, res)=>{
 
     }
