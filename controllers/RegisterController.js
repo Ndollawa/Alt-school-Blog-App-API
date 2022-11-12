@@ -15,7 +15,7 @@ class RegisterController{
    }
 index = (req, res)=>{
 
-    res.renderFile(path.join(__dirname,'views','register'));
+    res.render(path.join(__dirname,'views','register'));
 }
     // handles user registration
 register = async (req, res)=>{

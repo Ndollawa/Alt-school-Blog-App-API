@@ -17,7 +17,7 @@ class AuthController{
     // handles form
  }
    index =(req, res)=>{
-    res.renderFile(path.join(__dirname,'views','login'));
+    res.render(path.join(__dirname,'views','login'));
    }
     //hanles user login
     login = async (req, res)=>{
