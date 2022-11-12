@@ -4,18 +4,18 @@ import jwt from 'jsonwebtoken';
 import path from 'path';
 import {fileURLToPath} from 'url';
 // require('dotenv').config()
-
-class AuthController{
-    constructor(){
-        this.index = this.index.bind(this);
-        const __filename = fileURLToPath(import.meta.url);
+  const __filename = fileURLToPath(import.meta.url);
 
         // 
         const __dirname = path.dirname(__filename);
 
-   }
+  
+class AuthController{
+    constructor(){
+        this.index = this.index.bind(this);
+      
     // handles form
-
+ }
    index =(req, res)=>{
     res.renderFile(path.join(__dirname,'views','login'));
    }

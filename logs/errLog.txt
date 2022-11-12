@@ -35,3 +35,5 @@
 2022-11-11	08:37:55	9d87e13a-142f-4ae0-a2e5-4529e2625a55	TypeError: undefined
 2022-11-11	08:41:57	8ed6fb01-abed-4ef7-9713-eb17ab4e7a30	TypeError: undefined
 2022-11-11	08:42:01	be41b449-ce34-4672-9f10-20957a2225a4	TypeError: undefined
+2022-11-12	15:41:37	2273594d-a749-4c18-bdcb-9a3e9170c68b	ReferenceError: undefined
+2022-11-12	15:41:41	55ac960c-390c-450b-b4d4-31c2c403d337	ReferenceError: undefined
