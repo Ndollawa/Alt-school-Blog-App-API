@@ -631,3 +631,5 @@
 2022-11-12	15:54:41	9935a24f-d41f-4d8f-933c-0bae278b3f01	GET	undefined	/favicon.ico
 2022-11-12	15:54:44	415a3386-8990-4033-a870-c105b11cebe4	GET	undefined	/register
 2022-11-12	15:54:44	bef95bab-52a0-4746-b851-544172e54e67	GET	undefined	/favicon.ico
+2022-11-12	15:56:45	1a796d60-9849-4991-8e3a-0d3e3e9a032d	GET	undefined	/register
+2022-11-12	15:56:46	171b34f6-134c-4ca7-9410-b39c578814a3	GET	undefined	/favicon.ico
