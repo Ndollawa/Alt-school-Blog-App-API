@@ -25,9 +25,10 @@ class PostController{
       };
       
       const options = {
-        page: req?.params?.page || 1,
-        limit: 10,
+        page: req?.query?.page || 1,
+        limit: req?.query?.limit || 20,
         populate:["author"],
+        sort:({createdAt:-1}),
         customLabels: customLabels,
       };
       
@@ -35,7 +36,7 @@ class PostController{
     if(!Post) return res.status(204).json({'message': 'No Post found!'});
    
      PostModel.paginate({}, options, function (err, result) {
-        // result.itemsList//[here docs become itemsList]
+        result.itemsList//[here docs become itemsList]
         // result.paginator.itemCount //[here totalDocs becomes itemCount]
         // result.paginator.perPage //[here limit becomes perPage]
         // result.paginator.currentPage  //[here page becomes currentPage]
@@ -55,12 +56,38 @@ class PostController{
         {
            return res.status(400).json({'message':'ID parameter is required.'})
        }
-       const post = await PostModel.findOne({_id:req.params.id}).exec();
-       if(!post) return res.status(204).json({'message':`No post matches ID ${req.params.id}.` });
+       const query = {_id:req.params.id}
+       const message = `No post matches ID ${req.params.id}.`;
+       const post = await PostModel.findOne(query).exec();
+    if(!post) return res.status(204).json({'message':message});
         //check for a Post in the DB 
       const  updateCount = await PostModel.findOneAndUpdate({_id:post._id} ,{ read_count: (post.read_count + 1) });
     //   await updateCount.save()
-      res.json(post);
+    const customLabels = {
+      totalDocs: 'itemCount',
+      docs: 'itemsList',
+      limit: 'perPage',
+      page: 'currentPage',
+      nextPage: 'next',
+      prevPage: 'prev',
+      totalPages: 'pageCount',
+      pagingCounter: 'slNo',
+      meta: 'paginator',
+    };
+    
+    const options = {
+      // page: req?.query?.page || 1,
+      // limit: req?.query?.limit || 20,
+      populate:["author"],
+      sort:({createdAt:-1}),
+      customLabels: customLabels,
+    };
+ 
+   PostModel.paginate(query, options, function (err, result) {
+  
+      res.json(result);
+    });
+      // res.json(post);
         
     }
     create = async (req, res)=>{
@@ -117,12 +144,12 @@ class PostController{
         if(req.body?.body) post.body = body;
         if(req.body?.tags) post.tags = tags;
         if(req.body?.description) post.description = description;
-        // if(req.body?.state) post.state = req.body.state;
+        if(req.body?.state) post.state = req.body.state;
         if(req.body?.category) post.category = category;
         // if(req.body?.title) post.title = req.body.title;
         // if(req.body?.title) post.title = req.body.title;
         const result = await post.save();
-        res.json({"Success":`The Post ${title} Deleted`});
+       res.json({"message":`The Post '${title}' updated`,'post':result});
     }
     delete = async(req, res)=>{
         if(!req?.body?.id)return res.status(400).json({'message':'ID parameter is required.'});
@@ -130,9 +157,89 @@ class PostController{
        const post = await PostModel.findOne({_id:req.body.id}).exec();
        if(!post) return res.status(204).json({'message':`No post matches ID ${req.body.id}.` });
        const result = await post.deleteOne({_id:req.body.id});
-       res.json(result);
+        res.json({"message":`The Post '${title}' Deleted`});
     }
+    showPostByAuthor = async (req, res)=>{
+      if(!req?.params?.author)
+        {
+           return res.status(400).json({'message':' Author parameter is required.'})
+       }
+       const qstate = (req?.query?.state)?{state:req?.query?.state} : {};
+       const query = {author:req.params.author, ...qstate }
+       const message = `No post matches Author ${req.params.author}.`;
+       const post = await PostModel.findOne(query).exec();
+    if(!post) return res.status(204).json({'message':message});
+      const customLabels = {
+          totalDocs: 'itemCount',
+          docs: 'itemsList',
+          limit: 'perPage',
+          page: 'currentPage',
+          nextPage: 'next',
+          prevPage: 'prev',
+          totalPages: 'pageCount',
+          pagingCounter: 'slNo',
+          meta: 'paginator',
+        };
+        
+        const options = {
+          page: req?.query?.page || 1,
+          limit: req?.query?.limit || 20,
+          populate:["author"],
+          sort:({createdAt:-1}),
+          customLabels: customLabels,
+        };
+        
+     
+       PostModel.paginate(query, options, function (err, result) {
+          res.json(result);
+        });
+  
+      // res.json(Post)
+      }
 
+
+      search = async (req, res)=>{
+        if(!req?.query?.q)
+        {
+           return res.status(400).json({'message':' Search parameter is required.'})
+       }
+         const qauthor = (req?.query?.author)?{author:req?.query?.author} : {};
+         const qtags = (req?.query?.tags)?{tags:req?.query?.tags} : {};
+         const qtitle = (req?.query?.title)?{title:req?.query?.title} : {};
+         const qcategory = (req?.query?.category)?{category:req?.query?.category} : {};
+         const query = {...qauthor , ...qtitle, ...qtags, ...qcategory}
+         const message = `No post matches  ${req.query.title?.tag?.category}.`;
+         const post = await PostModel.findOne(query).exec();
+      if(!post) return res.status(204).json({'message':message});
+        const customLabels = {
+            totalDocs: 'itemCount',
+            docs: 'itemsList',
+            limit: 'perPage',
+            page: 'currentPage',
+            nextPage: 'next',
+            prevPage: 'prev',
+            totalPages: 'pageCount',
+            pagingCounter: 'slNo',
+            meta: 'paginator',
+          };
+          
+          const options = {
+            page: req?.query?.page || 1,
+            limit: req?.query?.limit || 20,
+            populate:["author"],
+            sort:({createdAt:-1}),
+            customLabels: customLabels,
+          };
+          
+       
+         PostModel.paginate(query, options, function (err, result) {
+            result.itemsList//[here docs become itemsList]
+          
+            res.json(result);
+          });
+    
+        // res.json(Post)
+        }
 
 }
 export default PostController;

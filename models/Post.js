@@ -22,7 +22,7 @@ const PostSchema =  new Schema({
         
     },
     tags:{
-        type:String,
+        type:[String],
         required: true
     },
     category:{
@@ -31,6 +31,10 @@ const PostSchema =  new Schema({
     },
     state:{
         type:String,
+        enum: {
+            values: ['draft', 'published'],
+            message: '{VALUE} is not supported'
+          },
         default:'draft',
         required: true   
     },

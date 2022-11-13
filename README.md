@@ -77,7 +77,7 @@ This is an api for a blog app
 
 ### Signup User
 
-- Route: /sregigister
+- Route: /regigister
 - Method: POST
 - Body: 
 ```
@@ -106,8 +106,9 @@ Success
 - Body: 
 ```
 {
-    "user_email":"ndollawa@gmail.com",
-     "password":"mypass"}
+    "user_email":"ndollawa@yahoo.com",
+     "password":"mypass"
+}
 ```
 
 - Responses
@@ -146,10 +147,118 @@ Success
   "message": "New Post 'The Fall of the Black Race' created!"
 }
 ```
+### Create Post
+
+- Route: /post/:id
+- Method: POST
+- Header
+    - Authorization: Bearer {token}
+- Body: 
+```
+{
+  "title":"The Updated Post",
+  "body":"have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+  "tags":"Litrature, Trending",
+  "description":"Wise words",
+  "category":"Litrature"
+}
+```
+
+- Responses
+
+Success
+```
+{
+  "message": "New Post 'The Fall of the Black Race' updated!",
+  "post":{
+  "title":"The Updated Post",
+  "body":"have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+  "tags":"Litrature, Trending",
+  "description":"Wise words",
+  "category":"Litrature"
+}
+}
+```
+
+### Change Post state
+
+- Route: /post/:id                          ("63678ca097b1af6a14468f4e)
+- Method: POST
+- Header
+    - Authorization: Bearer {token}
+- Body: 
+```
+{
+  "state": "published"
+ }
+ ```
+
+- Responses
+
+Success
+```
+{
+  "_id": "63678ca097b1af6a14468f4e",
+  "author": [
+    "6365c930492c8b5bfc88f387"
+  ],
+  "title": "The Desire for Wisdom 2",
+  "body": "have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+  "description": "Wise words",
+  "tags": "Litrature, Trending",
+  "category": "Litrature",
+  "state": "published",
+  "read_count": 4,
+  "__v": 1,
+  "updatedAt": "2022-11-12T11:20:46.655Z"
+}
+```
+### Delete a Post 
+
+- Route: /post/:id                          ("63678ca097b1af6a14468f4e)
+- Method: DELETE
+- Header
+    - Authorization: Bearer {token}
+
+- Responses
+
+Success
+```
+{
+ "message": "New Post 'The Fall of the Black Race' deleted!" }
+
+ ```
 ---
 ### Get Post
 
-- Route: /post/:id
+- Route: /post/:id     ("63678ca097b1af6a14468f4e")
+- Method: GET
+- Header
+    - Authorization: Bearer {token}
+- Responses
+
+Success
+```
+{
+  "_id": "63678ca097b1af6a14468f4e",
+  "author": [
+    "6365c930492c8b5bfc88f387"
+  ],
+  "title": "The Desire for Wisdom 2",
+  "body": "have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+  "description": "Wise words",
+  "tags": "Litrature, Trending",
+  "category": "Litrature",
+  "state": "draft",
+  "read_count": 4,
+  "__v": 1,
+  "updatedAt": "2022-11-12T11:20:46.655Z"
+}
+```
+---
+### Get Post
+
+- Route: /post/:author     ("6365c930492c8b5bfc88f387")
 - Method: GET
 - Header
     - Authorization: Bearer {token}
@@ -175,7 +284,7 @@ Success
 ```
 ---
 
-### Get Post
+### Get Posts
 
 - Route: /post
 - Method: GET
@@ -212,7 +321,7 @@ Success
         }
       ],
       "title": "The Desire for Wisdom 2",
-      "body": "have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+      "body": "have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to63678ca097b1af6a14468f4e do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
       "description": "Wise words",
       "tags": "Litrature, Trending",
       "category": "Litrature",
@@ -293,3 +402,48 @@ Success
 ---
 
 ...
+### Get Posts by Author
+
+- Route: /post/author/:author  (filter by state ?state = published)
+- Method: GET
+
+success:
+Response
+{
+"_id": "637025ff3fe480a1c2719820",
+"author": [
+{
+"roles": {
+"Author": 3
+},
+"_id": "6370251a3fe480a1c2719814",
+"first_name": "Ndubuisi",
+"last_name": "Ollawa",
+"email": "ndollawa@yahoo.com",
+"username": "Ndollawa",
+"password": "$2b$10$7/VLRoTUCFGoYCtkKeWKoOR25x1esHjOI64ItUR8BkdkvFtW.NCdi",
+"createdAt": "2022-11-12T22:58:34.873Z",
+"updatedAt": "2022-11-13T00:22:01.776Z",
+"__v": 0,
+"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJuZG9sbGF3YUB5YWhvby5jb20iLCJpYXQiOjE2NjgyOTg5MjEsImV4cCI6MTY2ODMwMjUyMX0.fMgwg_2CK1wXNnAQqniQIBv0Galjqfz5MA6Kq1W2bmo"
+}
+],
+"title": "Unical Exams as ASUU Resumes ",
+"body": "I have finally graduated! There is always that mix of excitement and relief in the air (right @Shaun Makanda ?) that you only get when you accomplish great things thanks to hard work!Curious of what we do during the ceremony :question: :thinking_face: • We hear advice from our very own sensei on what we need to do to continue being successful software engineers • Graduates get officially onboarded in The Room and write a letter to their future self, as a future reminder and checker of their aspirations and goals. But there are so many things that we are not going to tell you…we do not want to spoil the surprise to you!:arrow_down: Here some of the beautiful faces during prior graduation - can you believe that you will be one of them soon!?",
+"description": "Wise words",
+"tags": "Litrature, Trending",
+"category": "Litrature",
+"state": "published",
+"read_count": 2,
+"reading_time": "1",
+"createdAt": "2022-11-12T23:02:23.916Z",
+"updatedAt": "2022-11-13T00:28:45.829Z",
+"__v": 0
+}
+
+```
+...
+### Search Posts by Author | Tags | Title
+
+- Route: /post/search/
+- Method: GET

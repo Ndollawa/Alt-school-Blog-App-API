@@ -15,11 +15,17 @@ router.route('/')
 .delete(verifyJWT, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.delete(req, res, next));
 
 
+router.route('/search/:q').get((req, res, next) => PostHandler.search(req, res, next));
+router.route('/author/:author/').get((req, res, next) => PostHandler.showPostByAuthor(req, res, next));
+
+
 router.route('/:id/')
 .get((req, res, next) => PostHandler.show(req, res, next))
 .post(verifyJWT, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.update(req, res, next))
 .put(verifyJWT, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.update(req, res, next))
 .delete(verifyJWT, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor, ROLES_LIST.Author), (req, res, next) => PostHandler.delete(req, res, next))
+
+
 
 
 export default  router; 
